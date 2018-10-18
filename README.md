@@ -36,30 +36,9 @@ If you just want a quick test, clone this repository, install [js-beautify](http
 ./beauty-diff ugly.js
 ```
 
-You should see this output, only *in color*:
+You should see this output:
 
-```bash
-$ ./beauty-diff.sh ugly.js
-1,3c1,3
-< let myFunc    =function()  {
-< console.log( 'ugly!'                    );
-<                  };
----
-> let myFunc = function() {
->   console.log('ugly!');
-> };
-5c5
-<                  myFunc();
-\ No newline at end of file
----
-> myFunc();
-\ No newline at end of file
-
-Do you accept beautified file? [y,n]
-y
-Saving changes to ugly.js
-
-```
+![Example Image](/Users/lucky_bloop/programming/bash/beauty-diff/example/Example Image.png)
 
 ## To Do:
 
