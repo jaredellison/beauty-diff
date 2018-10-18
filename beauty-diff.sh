@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# beauty-diff Version 0.1
+# Jared Ellison October 2018
+# * Preview and accept the changes of a beautified file. *
+
 ###################################
 # Setup
 
@@ -32,14 +36,14 @@ colordiff $FILE $BEAUTIFUL_FILE
 # Colordiff output doesn't always end in a new line so here's one:
 echo ""
 
-echo "accept beautified file? [y,n]"
+echo "Do you accept beautified file? [y,n]"
 read input
 
 if [[ $input == "Y" || $input == "y" ]]; then
-  echo "saving changes"
+  echo "Saving changes to $FILE"
   cp $BEAUTIFUL_FILE $FILE
 else
-  echo "changes not accepted"
+  echo "Changes not accepted"
 fi
 
 # Clean up /tmp/ and remove temporary file
