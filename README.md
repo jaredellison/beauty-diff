@@ -38,7 +38,7 @@ If you just want a quick test, clone this repository, install [js-beautify](http
 
 You should see this output:
 
-![Example Image](/Users/lucky_bloop/programming/bash/beauty-diff/example/Example Image.png)
+![Example Image](https://github.com/jaredellison/beauty-diff/blob/master/example/Example%20Image.png?raw=true)
 
 ## To Do:
 
