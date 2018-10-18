@@ -1,5 +1,5 @@
-let myFunc = function() {
-  console.log('ugly!');
-};
+let myFunc    =function()  {
+console.log( 'ugly!'                    );
+                 };
 
-myFunc();
+                 myFunc();
