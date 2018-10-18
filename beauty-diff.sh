@@ -18,7 +18,7 @@ colordiff -v >/dev/null 2>&1 || { echo >&2 "Please install colordiff: https://ww
 FILE=("${@}")
 
 # Check if the file actually exists
-if [ ! -f $FILE ] || [ -z "$FILE"]; then
+if [ ! -f $FILE ] || [ -z "$FILE" ]; then
     echo "File not found!"
     exit 1
 fi
