@@ -4,7 +4,7 @@
 
 I've been using and enjoying the proofreading utility of [js-beautify](https://beautifier.io/) to clean my code and make everything spiffy. I don't run js-beautify that often, but when I do, I want to be sure that I agree with all the changes it made. I want to pay attention to the feedback so I can write better code and be aware if anything goes awry. Although js-beautify is available in a web application, it is much quicker to use the command-line version.
 
-This is a simple script which sends the output of `js-beautify`  to a temporary file and compares it with the original file. If you approve the changes, it replace the original file.
+This is a simple bash script (for Unix or Mac machines) which sends the output of `js-beautify`  to a temporary file and compares it with the original file. If you approve the changes, it replace the original file.
 
 The comparison is done using [colordiff](http://www.colordiff.org/), a simple utility like gnu's classic `diff` only `colordiff` shows its output in color, in a similar way to `git`.
 
@@ -26,6 +26,39 @@ To run the script type:
 
 ```bash
 beauty-diff fileName
+```
+
+### A quick demo:
+
+If you just want a quick test, clone this repository, install [js-beautify](https://github.com/beautify-web/js-beautify) and [colordiff](https://github.com/daveewart/colordiff), navigate to the cloned directory and run beauty-diff on the example file: `ugly.js`:
+
+```
+./beauty-diff ugly.js
+```
+
+You should this output only in *color*:
+
+```bash
+$ ./beauty-diff.sh ugly.js
+1,3c1,3
+< let myFunc    =function()  {
+< console.log( 'ugly!'                    );
+<                  };
+---
+> let myFunc = function() {
+>   console.log('ugly!');
+> };
+5c5
+<                  myFunc();
+\ No newline at end of file
+---
+> myFunc();
+\ No newline at end of file
+
+Do you accept beautified file? [y,n]
+y
+Saving changes to ugly.js
+
 ```
 
 ## To Do:
