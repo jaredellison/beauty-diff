@@ -42,12 +42,10 @@ You should see this output:
 
 ## To Do:
 
-- [ ] Test on other unix machines
 - [ ] Allow the script to accept options and call js-beautify with them
 - [ ] Allow the script to handle an array of input files
 - [ ] Suggest this functionality as an addition to the js-beautify project
   - [ ] Look into implementing colordiff using node.js
   - [ ] Look into implementing colordiff using Python
-
 - [x] Allow the script to handle filenames where a full file path is passed
-
+- [x] Test on other unix machines
