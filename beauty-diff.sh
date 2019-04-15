@@ -14,42 +14,46 @@ js-beautify -v >/dev/null 2>&1 || { echo >&2 "Please install js-beautify: https:
 colordiff -v >/dev/null 2>&1 || { echo >&2 "Please install colordiff: https://www.colordiff.org/"; exit 1; }
 ###################################
 
+if [[ $# -eq 0 ]]; then
+  echo "usage: $(basename "$0") file"
+  exit 1
+fi
+
 # Get input filename
-FILE_PATH=("${@}")
+FILE_PATH="${*}"
 
 # Check if the file actually exists
-if [ ! -f $FILE_PATH ] || [ -z "$FILE_PATH" ]; then
+if [[ ! -f $FILE_PATH ]]; then
     echo "File not found!"
     exit 1
 fi
 
 # Strip the filename from the full path
-FILE_NAME=$(basename $FILE_PATH)
+FILE_NAME=$(basename "$FILE_PATH")
 
 # Create a temporary file
 BEAUTIFUL_FILE="/tmp/$FILE_NAME-beautified"
-touch $BEAUTIFUL_FILE
+touch "$BEAUTIFUL_FILE"
 
 # Process input file
-js-beautify $FILE_PATH > $BEAUTIFUL_FILE
+js-beautify "$FILE_PATH" > "$BEAUTIFUL_FILE"
 
 # Compare with original file
-colordiff $FILE_PATH $BEAUTIFUL_FILE
+colordiff "$FILE_PATH" "$BEAUTIFUL_FILE"
 
 # Colordiff output doesn't always end in a new line so here's one:
 echo ""
 
-echo "Do you accept beautified file? [y,n]"
-read input
+read -r -p "Do you accept beautified file? [y,n] " input
 
-if [[ $input == "Y" || $input == "y" ]]; then
+if [[ $input == [Yy] ]]; then
   echo "Saving changes to $FILE"
-  cp $BEAUTIFUL_FILE $FILE_PATH
+  cp "$BEAUTIFUL_FILE" "$FILE_PATH"
 else
   echo "Changes not accepted"
 fi
 
 # Clean up /tmp/ and remove temporary file
-rm $BEAUTIFUL_FILE
+rm "$BEAUTIFUL_FILE"
 
 exit 0
