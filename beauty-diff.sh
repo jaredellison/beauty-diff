@@ -18,6 +18,13 @@ colordiff -v &>/dev/null || {
     echo >&2 "Please install colordiff: https://www.colordiff.org/"
     exit 1
 }
+
+# for cleaning up the tmp file
+cleanup() {
+  rm "$1"
+  trap - EXIT HUP INT QUIT TERM
+  exit
+}
 ###################################
 
 if [[ $# -eq 0 ]]; then
@@ -37,7 +44,7 @@ for file do
 
     # Create a temporary file
     beautifulFile=$(mktemp)
-    trap 'rm $beautifulFile' EXIT HUP INT QUIT TERM
+    trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
 
     # Process input file
     js-beautify "$file" > "$beautifulFile"
