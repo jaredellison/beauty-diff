@@ -8,10 +8,10 @@
 # Setup
 
 # Check if js-beautify is installed
-js-beautify -v >/dev/null 2>&1 || { echo >&2 "Please install js-beautify: https://beautifier.io/"; exit 1; }
+js-beautify -v &>/dev/null || { echo >&2 "Please install js-beautify: https://beautifier.io/"; exit 1; }
 
 # Check if js-beautify is installed
-colordiff -v >/dev/null 2>&1 || { echo >&2 "Please install colordiff: https://www.colordiff.org/"; exit 1; }
+colordiff -v &>/dev/null || { echo >&2 "Please install colordiff: https://www.colordiff.org/"; exit 1; }
 ###################################
 
 if [[ $# -eq 0 ]]; then
