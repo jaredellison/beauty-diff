@@ -21,40 +21,43 @@ colordiff -v &>/dev/null || {
 ###################################
 
 if [[ $# -eq 0 ]]; then
-  echo "usage: $(basename "$0") file"
-  exit 1
-fi
-
-# Get input filename
-FILE_PATH="${*}"
-
-# Check if the file actually exists
-if [[ ! -f $FILE_PATH ]]; then
-    echo "File not found!"
+    cat <<EOF
+usage: $(basename "$0") file ...
+Preview changes of js-beautify and compare with colordiff on file(s).
+EOF
     exit 1
 fi
 
-# Create a temporary file
-BEAUTIFUL_FILE=$(mktemp)
-trap 'rm $BEAUTIFUL_FILE' EXIT
+for file do
+    # Check if the file actually exists
+    if [[ ! -f $file ]]; then
+        echo "File not found!"
+        exit 1
+    fi
 
-# Process input file
-js-beautify "$FILE_PATH" > "$BEAUTIFUL_FILE"
+    # Create a temporary file
+    beautifulFile=$(mktemp)
+    trap 'rm $beautifulFile' EXIT HUP INT QUIT TERM
 
-# Compare with original file
-colordiff "$FILE_PATH" "$BEAUTIFUL_FILE"
+    # Process input file
+    js-beautify "$file" > "$beautifulFile"
 
-# Colordiff output doesn't always end in a new line so here's one:
-echo ""
+    # Compare with original file
+    colordiff "$file" "$beautifulFile"
 
-read -r -p "Do you accept beautified file? [y,n] " input
+    # Colordiff output doesn't always end in a new line so here's one:
+    echo ""
 
-if [[ $input != [Yy] ]]; then
-  echo "Changes not accepted"
-  exit 0
-fi
+    read -r -p "Do you accept beautified file? [y,n] "
 
-echo "Saving changes to $FILE"
-cp "$BEAUTIFUL_FILE" "$FILE_PATH"
+    if [[ $REPLY = [Yy] ]]; then
+        echo "Saving changes to $file"
+        cp "$beautifulFile" "$file"
+    else
+        echo "Changes not accepted"
+    fi
+    rm "$beautifulFile"
+    trap - EXIT HUP INT QUIT TERM # reset trap
+done
 
 exit 0
