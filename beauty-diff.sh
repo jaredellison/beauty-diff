@@ -31,8 +31,8 @@ fi
 for file do
     # Check if the file actually exists
     if [[ ! -f $file ]]; then
-        echo "File not found!"
-        exit 1
+        echo "Skipping bad file name: \"$file\""
+        continue
     fi
 
     # Create a temporary file
