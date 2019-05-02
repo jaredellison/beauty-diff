@@ -28,43 +28,43 @@ colordiff -v &>/dev/null || fatal "Please install colordiff: https://www.colordi
 ###################################
 
 if [[ $# -eq 0 ]]; then
-    cat <<EOF
+  cat <<EOF
 usage: $(basename "$0") file ...
 Preview changes of js-beautify and compare with colordiff on file(s).
 EOF
-    exit 1
+  exit 1
 fi
 
 for file do
-    # Check if the file actually exists
-    if [[ ! -f $file ]]; then
-        echo "Skipping bad file name: \"$file\""
-        continue
-    fi
+  # Check if the file actually exists
+  if [[ ! -f $file ]]; then
+    echo "Skipping bad file name: \"$file\""
+    continue
+  fi
 
-    # Create a temporary file
-    beautifulFile=$(mktemp) || fatal "could not make temporary file, exiting"
-    trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
+  # Create a temporary file
+  beautifulFile=$(mktemp) || fatal "could not make temporary file, exiting"
+  trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
 
-    # Process input file
-    js-beautify "$file" > "$beautifulFile"
+  # Process input file
+  js-beautify "$file" > "$beautifulFile"
 
-    # Compare with original file
-    colordiff "$file" "$beautifulFile"
+  # Compare with original file
+  colordiff "$file" "$beautifulFile"
 
-    # Colordiff output doesn't always end in a new line so here's one:
-    echo ""
+  # Colordiff output doesn't always end in a new line so here's one:
+  echo ""
 
-    read -r -p "Do you accept beautified file? [y,n] "
+  read -r -p "Do you accept beautified file? [y,n] "
 
-    if [[ $REPLY = [Yy] ]]; then
-        echo "Saving changes to $file"
-        cp "$beautifulFile" "$file"
-    else
-        echo "Changes not accepted"
-    fi
-    rm "$beautifulFile"
-    trap - EXIT HUP INT QUIT TERM # reset trap
+  if [[ $REPLY = [Yy] ]]; then
+    echo "Saving changes to $file"
+    cp "$beautifulFile" "$file"
+  else
+    echo "Changes not accepted"
+  fi
+  rm "$beautifulFile"
+  trap - EXIT HUP INT QUIT TERM # reset trap
 done
 
 exit 0
