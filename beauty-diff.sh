@@ -7,24 +7,24 @@
 ###################################
 # Setup
 
-# Check if js-beautify is installed
-js-beautify -v &>/dev/null || {
-    echo >&2 "Please install js-beautify: https://beautifier.io/"
-    exit 1
-}
-
-# Check if js-beautify is installed
-colordiff -v &>/dev/null || {
-    echo >&2 "Please install colordiff: https://www.colordiff.org/"
-    exit 1
-}
-
 # for cleaning up the tmp file
 cleanup() {
   rm "$1"
   trap - EXIT HUP INT QUIT TERM
   exit
 }
+
+fatal() {
+  echo >&2 "$1"
+  exit 1
+}
+
+# Check if js-beautify is installed
+js-beautify -v &>/dev/null || fatal "Please install js-beautify: https://beautifier.io/"
+
+# Check if js-beautify is installed
+colordiff -v &>/dev/null || fatal "Please install colordiff: https://www.colordiff.org/"
+
 ###################################
 
 if [[ $# -eq 0 ]]; then
@@ -43,7 +43,7 @@ for file do
     fi
 
     # Create a temporary file
-    beautifulFile=$(mktemp)
+    beautifulFile=$(mktemp) || fatal "could not make temporary file, exiting"
     trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
 
     # Process input file
