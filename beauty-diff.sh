@@ -35,16 +35,16 @@ EOF
   exit 1
 fi
 
+# Create a temporary file
+beautifulFile=$(mktemp) || fatal "could not make temporary file, exiting"
+trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
+
 for file do
   # Check if the file actually exists
   if [[ ! -f $file ]]; then
     echo "Skipping bad file name: \"$file\""
     continue
   fi
-
-  # Create a temporary file
-  beautifulFile=$(mktemp) || fatal "could not make temporary file, exiting"
-  trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
 
   # Process input file
   js-beautify "$file" > "$beautifulFile"
@@ -63,8 +63,6 @@ for file do
   else
     echo "Changes not accepted"
   fi
-  rm "$beautifulFile"
-  trap - EXIT HUP INT QUIT TERM # reset trap
 done
 
 exit 0
