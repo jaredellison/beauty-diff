@@ -19,11 +19,39 @@ fatal() {
   exit 1
 }
 
-# Check if js-beautify is installed
-js-beautify -v &>/dev/null || fatal "Please install js-beautify: https://beautifier.io/"
+getBeautify() {
+  choices=("abort")
+  command -v npm &>/dev/null && choices+=("node (npm)")
+  command -v pip &>/dev/null && choices+=("python (pip)")
+  select choice in "${choices[@]}"; do
+    case $choice in
+      "node*") sudo npm -g install js-beautify
+        break;;
+      "python*") pip install jsbeautifier
+        break;;
+      *) fatal "Please install js-beautify: https://beautifier.io/";;
+    esac
+  done
+}
+
+getColordiff() {
+  # check if URL is valid and consider handling error when
+  # colordiff.org is unavailable or even permanently dies
+  local version
+  version="colordiff-1.0.18"
+  curl "https://www.colordiff.org/$version.tar.gz" \
+    | tar xz
+  cd $version
+  sudo make install || fatal "Please install colordiff: https://www.colordiff.org/"
+  cd ..
+  rm -rf $version
+}
 
 # Check if js-beautify is installed
-colordiff -v &>/dev/null || fatal "Please install colordiff: https://www.colordiff.org/"
+js-beautify -v &>/dev/null || getBeautify
+
+# Check if js-beautify is installed
+colordiff -v &>/dev/null || getColordiff
 
 ###################################
 
