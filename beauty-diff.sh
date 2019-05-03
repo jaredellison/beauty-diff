@@ -21,13 +21,20 @@ fatal() {
 
 getBeautify() {
   choices=("abort")
-  command -v npm &>/dev/null && choices+=("node (npm)")
-  command -v pip &>/dev/null && choices+=("python (pip)")
+  command -v npm &>/dev/null && choices+=("npm (node)")
+  command -v pip &>/dev/null && choices+=("pip (python)")
+  if [[ ${#choices[@]} -eq 1 ]]; then
+      fatal "Please install js-beautify: https://beautifier.io/"
+  fi
+  cat <<EOF
+$(basename $0) requires js-beautify.
+Select an available package manager or abort:
+EOF
   select choice in "${choices[@]}"; do
     case $choice in
-      "node*") sudo npm -g install js-beautify
+      "npm*") sudo npm -g install js-beautify
         break;;
-      "python*") pip install jsbeautifier
+      "pip*") pip install jsbeautifier
         break;;
       *) fatal "Please install js-beautify: https://beautifier.io/";;
     esac
