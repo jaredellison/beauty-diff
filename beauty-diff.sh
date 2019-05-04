@@ -45,7 +45,7 @@ getColordiff() {
   choices=("abort" "download and install colordiff (https://www.colordiff.org)")
   cat <<EOF
 $(basename "$0") requires colordiff.
-Install from www.colordiff.org abort?
+Install from www.colordiff.org or abort?
 EOF
   select choice in "${choices[@]}"; do
     if [[ $choice = abort ]]; then
