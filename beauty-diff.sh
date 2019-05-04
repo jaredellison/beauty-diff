@@ -27,31 +27,57 @@ getBeautify() {
       fatal "Please install js-beautify: https://beautifier.io/"
   fi
   cat <<EOF
-$(basename $0) requires js-beautify.
+$(basename "$0") requires js-beautify.
 Select an available package manager or abort:
 EOF
   select choice in "${choices[@]}"; do
     case $choice in
-      "npm*") sudo npm -g install js-beautify
-        break;;
-      "pip*") pip install jsbeautifier
-        break;;
+      "npm (node)") npmInstall;;
+      "pip (python)") pip install jsbeautifier;;
       *) fatal "Please install js-beautify: https://beautifier.io/";;
     esac
+    break
   done
 }
 
 getColordiff() {
-  # check if URL is valid and consider handling error when
-  # colordiff.org is unavailable or even permanently dies
+  # TODO check if URL is valid and consider handling error if colordiff.org is down
+  choices=("abort" "download and install colordiff (https://www.colordiff.org)")
+  select choice in "${choices[@]}"; do
+    if [[ $choice = abort ]]; then
+      fatal "Please install colordiff: https://www.colordiff.org/"
+    else
+      break
+    fi
+  done
   local version
   version="colordiff-1.0.18"
   curl "https://www.colordiff.org/$version.tar.gz" \
-    | tar xz
-  cd $version
-  sudo make install || fatal "Please install colordiff: https://www.colordiff.org/"
+    | tar xz || fatal "Please install colordiff: https://www.colordiff.org/"
+  cd "$version" || fatal "Please install colordiff: https://www.colordiff.org/"
+  installDirs="$(awk 'BEGIN { FS="\=" } /_DIR\?/ { print $2 }' Makefile)"
+  while read -r line; do
+    if [[ $UID -ne $(stat -f "%u" "$line") ]]; then
+      needsRoot="sudo"
+    fi
+  done <<<"$installDirs"
+  if [[ $(uname) == "Darwin" ]]; then
+      sed -i '/install -Dm/d' Makefile # -D is an illegal flag for BSD install
+  fi
+  "$needsRoot" make install || fatal "Please install colordiff: https://www.colordiff.org/"
   cd ..
   rm -rf $version
+}
+
+npmInstall() {
+  npmRootOwner=$(stat -f "%u" "$(npm root -g)")
+  if [[ $UID -eq $npmRootOwner ]]; then
+    npm -g install js-beautify || fatal "Install failed. Try: npm -g install js-beautify"
+  elif [[ $UID -eq 0 ]]; then
+    sudo -g install js-beautify || fatal "Install failed. Try: sudo npm -g install js-beautify"
+  else
+    fatal "Could not determine owner of $(npm root -g). Try: npm -g install js-beautify"
+  fi
 }
 
 # Check if js-beautify is installed
