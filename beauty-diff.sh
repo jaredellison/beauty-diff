@@ -66,8 +66,10 @@ EOF
       needsRoot="sudo"
     fi
   done <<<"$installDirs"
-  if [[ $(uname) == "Darwin" ]]; then
-      sed -i '/install -Dm/d' Makefile # -D is an illegal flag for BSD install
+  if [[ $(uname) == "Darwin" ]]; then # edit Makefile for less errors
+      sed -i '' '
+      /install -Dm/d
+      s/root\.root/root:wheel/' Makefile
   fi
   "$needsRoot" make install || fatal "Please install colordiff: https://www.colordiff.org/"
   cd ..
