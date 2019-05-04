@@ -43,6 +43,10 @@ EOF
 getColordiff() {
   # TODO check if URL is valid and consider handling error if colordiff.org is down
   choices=("abort" "download and install colordiff (https://www.colordiff.org)")
+  cat <<EOF
+$(basename "$0") requires colordiff.
+Install from www.colordiff.org abort?
+EOF
   select choice in "${choices[@]}"; do
     if [[ $choice = abort ]]; then
       fatal "Please install colordiff: https://www.colordiff.org/"
@@ -56,6 +60,7 @@ getColordiff() {
     | tar xz || fatal "Please install colordiff: https://www.colordiff.org/"
   cd "$version" || fatal "Please install colordiff: https://www.colordiff.org/"
   installDirs="$(awk 'BEGIN { FS="\=" } /_DIR\?/ { print $2 }' Makefile)"
+  local needsRoot
   while read -r line; do
     if [[ $UID -ne $(stat -f "%u" "$line") ]]; then
       needsRoot="sudo"
@@ -70,14 +75,11 @@ getColordiff() {
 }
 
 npmInstall() {
-  npmRootOwner=$(stat -f "%u" "$(npm root -g)")
-  if [[ $UID -eq $npmRootOwner ]]; then
-    npm -g install js-beautify || fatal "Install failed. Try: npm -g install js-beautify"
-  elif [[ $UID -eq 0 ]]; then
-    sudo -g install js-beautify || fatal "Install failed. Try: sudo npm -g install js-beautify"
-  else
-    fatal "Could not determine owner of $(npm root -g). Try: npm -g install js-beautify"
+  local needsRoot
+  if [[ $UID -ne $(stat -f "%u" "$(npm root -g)") ]]; then
+    needsRoot="sudo"
   fi
+  "$needsRoot" npm -g install js-beautify || fatal "Install failed. Try: sudo npm -g install js-beautify"
 }
 
 # Check if js-beautify is installed
