@@ -64,7 +64,7 @@ EOF
       /install -Dm/d
       s/root\.root/root:wheel/' Makefile
   fi
-  "$needsRoot" make install || fatal "Please install colordiff: https://www.colordiff.org/"
+  $needsRoot make install || fatal "Please install colordiff: https://www.colordiff.org/"
   cd ..
   rm -rf $version
 }
@@ -74,7 +74,7 @@ npmInstall() {
   if [[ $UID -ne $(stat -f "%u" "$(npm root -g)") ]]; then
     needsRoot="sudo"
   fi
-  "$needsRoot" npm -g install js-beautify || fatal "Install failed. Try: sudo npm -g install js-beautify"
+  $needsRoot npm -g install js-beautify || fatal "Install failed. Try: sudo npm -g install js-beautify"
 }
 
 # Check if js-beautify is installed
