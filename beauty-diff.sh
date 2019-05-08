@@ -7,13 +7,6 @@
 ###################################
 # Setup
 
-# for cleaning up the tmp file
-cleanup() {
-  rm "$1"
-  trap - EXIT HUP INT QUIT TERM
-  exit
-}
-
 fatal() {
   echo >&2 "$1"
   exit 1
@@ -102,7 +95,7 @@ fi
 
 # Create a temporary file
 beautifulFile=$(mktemp) || fatal "could not make temporary file, exiting"
-trap 'cleanup $beautifulFile' EXIT HUP INT QUIT TERM
+trap 'rm -f $beautifulFile' EXIT
 
 for file do
   # Check if the file actually exists
